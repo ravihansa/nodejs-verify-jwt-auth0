@@ -1,0 +1,19 @@
+service: nodejs-verify-jwt-auth0
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-west-1
+  memorySize: 128
+functions:
+  handler:
+    handler: index.handler
+    events: 
+      - http: 
+          path: /
+          method: ANY
+          cors: true
+      - http: 
+          path: /{proxy+}
+          method: ANY
+          cors: true
