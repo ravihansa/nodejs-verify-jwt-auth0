@@ -29,6 +29,7 @@ const checkJwt = jwt({
   algorithms: ['RS256']
 });
 
+// This route no needs authentication
 app.get('/api/public', function(req, res) {
   res.json({
     message: 'Hello from a public endpoint! You don\'t need to be authenticated to see this.'
@@ -42,6 +43,16 @@ app.get('/api/private', checkJwt, function(req, res) {
   });
 });
 
+// for error handle
+app.use((err, req, res, next) => {
+    if (err.name === 'ValidationError') {
+        var valErrors = [];
+        Object.keys(err.errors).forEach(key => valErrors.push(err.errors[key].message));
+        res.status(422).send(valErrors);
+    } else {
+        res.status(422).send(err);
+    }
+});
 
-// module.exports.handler = serverless(app);
-app.listen(process.env.PORT, () => console.log(`Server started at port : ${process.env.PORT}`));
+module.exports.handler = serverless(app);
+// app.listen(process.env.PORT, () => console.log(`Server started at port : ${process.env.PORT}`));
